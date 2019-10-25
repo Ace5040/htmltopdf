@@ -1,0 +1,17 @@
+{
+  "name": "htmltopdf",
+  "version": "1.0.0",
+  "description": "html to pdf converter service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^2.10.0",
+    "fastify-formbody": "^3.1.0",
+    "puppeteer": "^1.20.0"
+  }
+}
