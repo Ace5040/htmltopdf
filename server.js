@@ -33,7 +33,7 @@ async function getPdf(html) {
   await page.pdf({
     path: "./tmp/pdf-" + date + ".pdf",
     format: 'A4',
-    printBackground: 'true',
+    printBackground: true,
     margin: {
       top: "20px",
       left: "20px",
