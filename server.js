@@ -1,6 +1,6 @@
 const fastify = require('fastify')({
   logger: true,
-  bodyLimit: 33554432, // 32M
+  bodyLimit: 33554432
 });
 const puppeteer = require('puppeteer');
 const fs = require('fs');
