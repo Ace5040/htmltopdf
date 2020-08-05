@@ -1,4 +1,7 @@
-const fastify = require('fastify')({ logger: true });
+const fastify = require('fastify')({
+  logger: true,
+  bodyLimit: 33554432, // 32M
+});
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
@@ -30,7 +33,7 @@ async function getPdf(html) {
   await page.pdf({
     path: "./tmp/pdf-" + date + ".pdf",
     format: 'A4',
-    printBackground: true,
+    printBackground: 'true',
     margin: {
       top: "20px",
       left: "20px",
