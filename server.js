@@ -4,6 +4,7 @@ const fastify = require('fastify')({
 });
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
 var dir = './tmp';
 
@@ -15,14 +16,13 @@ async function getPdf(html) {
 
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath: '/usr/bin/chromium',
     args: [
       '--no-sandbox',
+      '--disable-dev-shm-usage',
       '--disable-setuid-sandbox'
     ]
   });
-
-  var date = new Date().valueOf();
-
   const page = await browser.newPage();
   await page.setViewport({
     width: 1920,
@@ -30,8 +30,9 @@ async function getPdf(html) {
     deviceScaleFactor: 1,
   });
   await page.setContent(html, {waitUntil: 'networkidle2'});
+  let fileName = `${dir}/pdf-${uuidv4()}.pdf`;
   await page.pdf({
-    path: "./tmp/pdf-" + date + ".pdf",
+    path: fileName,
     format: 'A4',
     printBackground: true,
     margin: {
@@ -41,8 +42,9 @@ async function getPdf(html) {
       bottom: "20px"
     }
   });
+  await page.close();
   await browser.close();
-  return "pdf-" + date + ".pdf";
+  return fileName;
 }
 
 fastify.route({
@@ -50,13 +52,9 @@ fastify.route({
   url: '/pdf',
   handler: function(request, reply){
     getPdf(request.body.html).then(fileName => {
-      pdf = fs.readFileSync('./tmp/' + fileName);
-      var result = {
-        status: 'ok',
-        pdf: Buffer.from(pdf).toString('base64')
-      };
-      fs.unlinkSync('./tmp/' + fileName);
-      reply.send(result);
+      let pdf = fs.readFileSync(fileName).toString('base64');
+      fs.unlinkSync(fileName);
+      reply.send({ status: 'ok', pdf });
     });
   }
 
